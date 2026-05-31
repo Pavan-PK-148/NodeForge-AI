@@ -1,0 +1,41 @@
+# --- DEPENDENCY PACKAGES ---
+node_modules/
+
+# --- ENVIRONMENTAL SECRETS & KEYFILES (CRITICAL) ---
+.env
+.env.local
+.env.production
+config.env
+*.env
+*.pem
+*.key
+*.cert
+
+# --- LOCAL FILE UPLOADS / TEMP MEDIA ---
+# Prevents testing files or uploads from being pushed, while keeping the folders intact
+public/uploads/*
+uploads/*
+!uploads/.gitkeep
+temp/
+tmp/
+
+# --- DEBUG & ERROR RUNTIME LOGS ---
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- DATABASE & LOCAL CACHE NODES ---
+.node_repl_history
+.cache/
+.pids/
+*.pid
+*.seed
+*.lock
+
+# --- OS & UTILITY ARCHIVES ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
