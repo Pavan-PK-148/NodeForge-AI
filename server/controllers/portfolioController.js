@@ -89,3 +89,42 @@ export const getPublicPortfolio = async (req, res) => {
     return res.status(500).json({ message: 'Public lookup resolver failure.', error: error.message });
   }
 };
+
+// @desc    Delete/Drop portfolio instance safely by ID context
+// @route   DELETE /api/portfolio/:id
+export const deletePortfolio = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Write permission token unverified.' });
+    }
+
+    // 1. Verify that the requested ID string passes validation tests
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid portfolio metadata index identifier.' });
+    }
+
+    // 2. Query and delete only if the target portfolio belongs directly to the caller node
+    const deletedPortfolio = await Portfolio.findOneAndDelete({
+      _id: id,
+      user: userId
+    });
+
+    if (!deletedPortfolio) {
+      return res.status(404).json({ 
+        message: `Portfolio index node ${id} was not found or access rights are denied on this instance.` 
+      });
+    }
+
+    return res.status(200).json({ 
+      success: true, 
+      message: 'Portfolio data shell dropped from cluster successfully.',
+      deletedId: id
+    });
+  } catch (error) {
+    console.error('[PORTFOLIO DESTRUCTION FAULT]:', error.message);
+    return res.status(500).json({ message: 'Failed to purge instance architecture.', error: error.message });
+  }
+};
