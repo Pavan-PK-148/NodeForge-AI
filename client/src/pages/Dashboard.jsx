@@ -202,7 +202,7 @@ export default function Dashboard() {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center font-bold font-mono text-white text-base shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-                Ω
+                N
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-bold tracking-tight text-white font-mono">
