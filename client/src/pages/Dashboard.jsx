@@ -23,7 +23,8 @@ import {
   Sparkles,
   User,
   FolderHeart,
-  Wand2
+  Wand2,
+  Cpu
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import PageWrapper from '../components/PageWrapper';
@@ -235,6 +236,77 @@ export default function Dashboard() {
   </motion.button>
 
   <motion.button
+  onClick={() => {
+    navigate('/skills-recommend');
+    window.scrollTo(0, 0);
+  }}
+  initial="initial"
+  whileHover="hover"
+  whileTap="tap"
+  variants={{
+    initial: { scale: 1 },
+    hover: { 
+      scale: 1.02,
+      borderColor: 'rgba(168, 85, 247, 0.6)',
+      backgroundColor: 'rgba(139, 92, 246, 0.08)'
+    },
+    tap: { scale: 0.98 }
+  }}
+  transition={{ type: "spring", stiffness: 500, damping: 25 }}
+  className="relative inline-flex items-center justify-center gap-3 px-6 py-3 rounded-xl border border-white/10 bg-zinc-950/40 backdrop-blur-md font-mono text-xs font-bold uppercase text-purple-300 cursor-pointer overflow-hidden group select-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] flex-shrink-0"
+>
+  {/* Absolute Corner Tech Brackets */}
+  <span className="absolute top-0 left-0 w-2 h-[1px] bg-purple-500 opacity-40 group-hover:opacity-100 transition-opacity" />
+  <span className="absolute top-0 left-0 w-[1px] h-2 bg-purple-500 opacity-40 group-hover:opacity-100 transition-opacity" />
+  <span className="absolute bottom-0 right-0 w-2 h-[1px] bg-purple-500 opacity-40 group-hover:opacity-100 transition-opacity" />
+  <span className="absolute bottom-0 right-0 w-[1px] h-2 bg-purple-500 opacity-40 group-hover:opacity-100 transition-opacity" />
+
+  {/* Laser Scanline Overlay */}
+  <motion.div
+    variants={{
+      initial: { y: '-100%' },
+      hover: { y: '200%' }
+    }}
+    transition={{ 
+      duration: 1.5, 
+      repeat: Infinity, 
+      ease: "linear" 
+    }}
+    className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400/50 to-transparent pointer-events-none"
+  />
+
+  {/* Matrix Core Icon Animation */}
+  <div className="relative flex items-center justify-center w-5 h-5 rounded-lg border border-purple-500/20 bg-purple-950/20 text-purple-400 overflow-hidden shadow-inner flex-shrink-0">
+    <motion.div
+      variants={{
+        initial: { rotate: 0 },
+        hover: { rotate: 90 }
+      }}
+      transition={{ type: "spring", stiffness: 200, damping: 15 }}
+      className="relative z-10"
+    >
+      <Cpu size={13} />
+    </motion.div>
+    <span className="absolute inset-0 bg-purple-500/10 animate-ping rounded-lg opacity-40" />
+  </div>
+
+  {/* FIXED: Stable Letter Spacing Tracking Variables */}
+  <motion.span 
+    variants={{
+      initial: { letterSpacing: '0.1em' },
+      hover: { letterSpacing: '0.12em', color: '#ffffff' }
+    }}
+    transition={{ duration: 0.2, ease: "easeOut" }}
+    className="relative z-10 w-full text-center"
+  >
+    Skills Recommendation
+  </motion.span>
+
+  {/* Subtle UI Metadata Footer Accent */}
+  <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-purple-500/30 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+</motion.button>
+
+  <motion.button
   onClick={handleNavigation}
   disabled={isScraping || isLoading}
   whileHover={!isScraping && !isLoading ? { scale: 1.04, backgroundColor: 'rgba(255,255,255,0.08)' } : {}}
@@ -256,23 +328,7 @@ export default function Dashboard() {
   <span>Enhance Resume</span>
 </motion.button>
 
-  {/* CREATE NEW BUTTON: Slick Contrast Inversion + Magnetic Elevate */}
-  <motion.button
-    onClick={() => navigate('/wizard')}
-    whileHover={{ 
-      scale: 1.04, 
-      y: -2,
-      boxShadow: '0 12px 20px -6px rgba(255,255,255,0.15), 0 0 15px rgba(255,255,255,0.1)'
-    }}
-    whileTap={{ scale: 0.97 }}
-    transition={{ type: "spring", stiffness: 400, damping: 15 }}
-    className="inline-flex items-center justify-center gap-2 bg-white text-black hover:bg-slate-100 text-xs font-black uppercase tracking-wider px-5 py-3 rounded-xl transition-all cursor-pointer shadow-md"
-  >
-    <motion.div whileHover={{ rotate: 90 }} transition={{ type: "spring", stiffness: 300 }}>
-      <Plus size={13} className="stroke-[3]" />
-    </motion.div>
-    <span>Create New</span>
-  </motion.button>
+  
 </div>
           </div>
 

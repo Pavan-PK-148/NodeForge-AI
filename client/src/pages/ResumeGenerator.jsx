@@ -184,30 +184,35 @@ export default function ResumeGenerator() {
       setIsGenerating(true);
 
       let fakeProgress = 0;
-
       const interval = setInterval(() => {
         fakeProgress += 5;
-
         if (fakeProgress <= 95) {
           setProgress(fakeProgress);
         }
       }, 250);
 
       const formData = new FormData();
-
       formData.append("resume", file);
       formData.append("jobDescription", jobDescription);
+
+      // 1. Fetch your authentication token
+      const token = localStorage.getItem('token'); 
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/resume/optimize`,
         formData,
         {
           responseType: "blob",
+          // 2. Add headers configuration block
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            ...(token && { 'Authorization': `Bearer ${token}` }) // Intercept token validation
+          },
+          withCredentials: true
         }
       );
 
       clearInterval(interval);
-
       setProgress(100);
 
       setPdfUrl(
@@ -218,6 +223,8 @@ export default function ResumeGenerator() {
         )
       );
 
+      // Extract custom headers injected by backend optimization payload safely
+      // (Optional: If you need to read custom data back from response metrics)
       setMetrics({
         atsScore: 94,
         strengths: [
@@ -234,14 +241,11 @@ export default function ResumeGenerator() {
 
       setTimeout(() => {
         setIsGenerating(false);
-
         toast.success("Resume Optimized Successfully");
       }, 1000);
     } catch (err) {
       console.log(err);
-
       toast.error("Pipeline failed");
-
       setIsGenerating(false);
     }
   };
