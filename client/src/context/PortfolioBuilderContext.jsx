@@ -102,6 +102,7 @@ export const PortfolioBuilderProvider = ({ children }) => {
   };
 
   // Explicitly commits the workspace draft state to the backend
+  // Explicitly commits the workspace draft state to the backend
   const savePortfolioDraft = async (explicitData = null) => {
     const stateToSave = explicitData || portfolioDataRef.current;
 
@@ -118,10 +119,18 @@ export const PortfolioBuilderProvider = ({ children }) => {
     }
 
     try {
+      // Create a clean copy of the data state structure to prevent Mongoose schema pollution
+      const cleanPayload = { ...stateToSave };
+      
+      // Safety step: If _id is empty string "", change it to null so Mongoose treats it as a fresh record
+      if (cleanPayload._id === "" || !cleanPayload._id) {
+        delete cleanPayload._id;
+      }
+
       const response = await fetch(API_BASE_URL, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify(stateToSave),
+        body: JSON.stringify(cleanPayload),
       });
 
       if (!response.ok) {

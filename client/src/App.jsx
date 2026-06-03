@@ -10,6 +10,9 @@ import Dashboard from './pages/Dashboard';
 import Wizard from './pages/Wizard';
 import Builder from './pages/Builder';
 import PublicView from './pages/PublicView';
+import TailoredResumeEngine from './pages/TailoredResumeEngine';
+import ResumeGenerator from './pages/ResumeGenerator';
+import SkillRecommendationNode from './pages/SkillRecommendationNode';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -37,6 +40,18 @@ function App() {
           } />
           <Route path="/builder" element={
             <ProtectedRoute><Builder /></ProtectedRoute>
+          } />
+
+          <Route path="/enhance" element={
+            <ProtectedRoute><TailoredResumeEngine /></ProtectedRoute>
+          } />
+
+          <Route path="/resume-enhance" element={
+            <ProtectedRoute><ResumeGenerator /></ProtectedRoute>
+          } />
+
+          <Route path="/skills-recommend" element={
+            <ProtectedRoute><SkillRecommendationNode /></ProtectedRoute>
           } />
           
           <Route path="*" element={<Navigate to="/" replace />} />

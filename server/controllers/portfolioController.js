@@ -18,27 +18,58 @@ export const getPortfolio = async (req, res) => {
   }
 };
 
-// @desc    Update portfolio transaction packet
+// @desc    Update or Create portfolio transaction packet
 // @route   POST /api/portfolio
 export const savePortfolio = async (req, res) => {
   try {
-    // FIX: Check for both properties to protect against token object inconsistencies
     const userId = req.user?.id || req.user?._id;
     
     if (!userId) {
       return res.status(401).json({ message: 'Write permission token unverified.' });
     }
 
-    const cleanBody = { ...req.body };
-    delete cleanBody.user; // Block query spoofing injections
-    delete cleanBody._id;
+    let { _id, ...cleanBody } = req.body;
 
-    // Direct isolated tracking update to specific owner user ID context node
-    let portfolio = await Portfolio.findOneAndUpdate(
-      { user: userId }, // FIX: Uses the unified runtime userId variable
-      { $set: cleanBody },
-      { new: true, runValidators: true, upsert: true, setDefaultsOnInsert: true }
-    );
+    // Prevent casting failures if an empty string or invalid structure is passed as an ID
+    if (!_id || _id === "" || !mongoose.Types.ObjectId.isValid(_id)) {
+      _id = null;
+    }
+
+    let portfolio = null;
+
+    // SCENARIO 1: If a valid portfolio _id exists, find and update that specific instance
+    if (_id) {
+      portfolio = await Portfolio.findOne({ _id: _id, user: userId });
+      
+      if (portfolio) {
+        // Expressively overwrite parent fields to prevent subdocument array pollution
+        portfolio.selectedTemplate = cleanBody.selectedTemplate || portfolio.selectedTemplate;
+        portfolio.profileImage = cleanBody.profileImage !== undefined ? cleanBody.profileImage : portfolio.profileImage;
+        portfolio.personalInfo = cleanBody.personalInfo || portfolio.personalInfo;
+        
+        // Handle skills mixed types safely and issue structural modification signals
+        if (cleanBody.skills) {
+          portfolio.skills = cleanBody.skills;
+          portfolio.markModified('skills'); 
+        }
+        
+        portfolio.projects = cleanBody.projects || portfolio.projects;
+        portfolio.experience = cleanBody.experience || portfolio.experience;
+        portfolio.education = cleanBody.education || portfolio.education;
+        portfolio.githubMetrics = cleanBody.githubMetrics || portfolio.githubMetrics;
+        
+        await portfolio.save();
+      }
+    }
+
+    // SCENARIO 2: If no valid _id was sent, or it wasn't found, insert a brand-new distinct record
+    if (!portfolio) {
+      portfolio = new Portfolio({
+        ...cleanBody,
+        user: userId // Explicitly assign owner link
+      });
+      await portfolio.save();
+    }
 
     return res.status(200).json(portfolio);
   } catch (error) {
@@ -52,27 +83,21 @@ export const savePortfolio = async (req, res) => {
 export const getPublicPortfolio = async (req, res) => {
   try {
     const { username } = req.params;
-    
-    // 1. Build a dynamic array of conditions so we NEVER match against "null"
     const queryConditions = [];
 
-    // 2. If it's a valid ObjectId, look it up by ID keys safely
     if (mongoose.Types.ObjectId.isValid(username)) {
       queryConditions.push({ _id: username });
       queryConditions.push({ user: username });
     }
 
-    // 3. Clean and escape the username string to prevent Regex injection attacks
     const cleanUsername = username.replace(/-/g, ' ').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     
     queryConditions.push({ 
       "personalInfo.fullName": { $regex: new RegExp(`^${cleanUsername}$`, 'i') } 
     });
 
-    // 4. Query using the clean, isolated conditions array
     let portfolio = await Portfolio.findOne({ $or: queryConditions });
 
-    // Development system profile rendering fallback mechanism
     if (!portfolio && username.startsWith('dev-node-')) {
       portfolio = await Portfolio.findOne(); 
     }
@@ -101,12 +126,10 @@ export const deletePortfolio = async (req, res) => {
       return res.status(401).json({ message: 'Write permission token unverified.' });
     }
 
-    // 1. Verify that the requested ID string passes validation tests
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid portfolio metadata index identifier.' });
     }
 
-    // 2. Query and delete only if the target portfolio belongs directly to the caller node
     const deletedPortfolio = await Portfolio.findOneAndDelete({
       _id: id,
       user: userId
@@ -128,3 +151,4 @@ export const deletePortfolio = async (req, res) => {
     return res.status(500).json({ message: 'Failed to purge instance architecture.', error: error.message });
   }
 };
+

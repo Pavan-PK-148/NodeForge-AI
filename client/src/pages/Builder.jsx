@@ -192,7 +192,39 @@ export default function Builder() {
       if (!savePortfolioDraft) {
         throw new Error("Save function undefined on portfolio context instance.");
       }
-      const success = await savePortfolioDraft(normalizedData);
+
+      // Deep sanitize all document tracks to prevent schema casting failures
+      const cleanDataPayload = {
+        ...normalizedData,
+        experience: normalizedData.experience.map((item) => {
+          const itemCopy = { ...item };
+          // 1. Remove non-schema frontend tracking tags completely
+          delete itemCopy.id; 
+          // 2. Eliminate invalid empty string IDs so MongoDB can initialize genuine keys
+          if (itemCopy._id === "" || !itemCopy._id) {
+            delete itemCopy._id;
+          }
+          return itemCopy;
+        }),
+        projects: normalizedData.projects.map((item) => {
+          const itemCopy = { ...item };
+          delete itemCopy.id;
+          if (itemCopy._id === "" || !itemCopy._id) {
+            delete itemCopy._id;
+          }
+          return itemCopy;
+        }),
+        education: normalizedData.education.map((item) => {
+          const itemCopy = { ...item };
+          delete itemCopy.id;
+          if (itemCopy._id === "" || !itemCopy._id) {
+            delete itemCopy._id;
+          }
+          return itemCopy;
+        })
+      };
+
+      const success = await savePortfolioDraft(cleanDataPayload);
       if (success) {
         toast.success('Portfolio draft states committed securely.');
       } else {
@@ -212,7 +244,37 @@ export default function Builder() {
       if (!savePortfolioDraft) {
         throw new Error("Save function undefined on portfolio context instance.");
       }
-      const saveSuccess = await savePortfolioDraft(normalizedData);
+
+      // Deep sanitize all document tracks before production compilation execution
+      const cleanDataPayload = {
+        ...normalizedData,
+        experience: normalizedData.experience.map((item) => {
+          const itemCopy = { ...item };
+          delete itemCopy.id;
+          if (itemCopy._id === "" || !itemCopy._id) {
+            delete itemCopy._id;
+          }
+          return itemCopy;
+        }),
+        projects: normalizedData.projects.map((item) => {
+          const itemCopy = { ...item };
+          delete itemCopy.id;
+          if (itemCopy._id === "" || !itemCopy._id) {
+            delete itemCopy._id;
+          }
+          return itemCopy;
+        }),
+        education: normalizedData.education.map((item) => {
+          const itemCopy = { ...item };
+          delete itemCopy.id;
+          if (itemCopy._id === "" || !itemCopy._id) {
+            delete itemCopy._id;
+          }
+          return itemCopy;
+        })
+      };
+
+      const saveSuccess = await savePortfolioDraft(cleanDataPayload);
       if (!saveSuccess) {
         setIsDeploying(false);
         toast.error('Pre-deployment baseline compilation failed.');
@@ -223,9 +285,10 @@ export default function Builder() {
 
       toast.promise(deployPromise, {
         loading: 'Compiling structural modules & launching live server routes...',
-        success: () => {
+        success: (savedRecord) => {
           setIsDeploying(false);
-          const uniqueSlug = `/p/${portfolioData?._id || portfolioData?.id}`;
+          const targetId = portfolioData?._id || portfolioData?.id;
+          const uniqueSlug = `/p/${targetId}`;
           return (
             <div className="flex flex-col gap-1 text-xs">
               <span className="font-bold text-white">Portfolio running on live server blocks!</span>
@@ -289,7 +352,7 @@ export default function Builder() {
             onClick={() => navigate('/dashboard')}
             className="text-xs font-mono tracking-wide text-slate-400 hover:text-white transition-colors cursor-pointer"
           >
-            // exit_dashboard
+            Exit dashboard
           </button>
 
           <button

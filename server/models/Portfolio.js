@@ -32,7 +32,7 @@ const PortfolioSchema = new mongoose.Schema({
   profileImage: { type: String, default: '' },
   
   personalInfo: {
-    fullName: { type: String, default: 'Initialize Name' },
+    fullName: { type: String, default: 'Initialize Name' }, // Mongoose handles defaults automatically!
     title: { type: String, default: 'Full-Stack Developer' },
     location: { type: String, default: 'Global' },
     summary: { type: String, default: '' },
@@ -55,9 +55,5 @@ const PortfolioSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-PortfolioSchema.pre('save', function(next) {
-  if (!this.personalInfo.fullName) this.personalInfo.fullName = 'Initialize Name';
-  next();
-});
 
 export default mongoose.model('Portfolio', PortfolioSchema);
