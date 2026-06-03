@@ -13,6 +13,7 @@ import PublicView from './pages/PublicView';
 import TailoredResumeEngine from './pages/TailoredResumeEngine';
 import ResumeGenerator from './pages/ResumeGenerator';
 import SkillRecommendationNode from './pages/SkillRecommendationNode';
+import PortfolioScoringNode from './pages/PortfolioScoringNode';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -52,6 +53,10 @@ function App() {
 
           <Route path="/skills-recommend" element={
             <ProtectedRoute><SkillRecommendationNode /></ProtectedRoute>
+          } />
+
+          <Route path="/portfolio-scoring" element={
+            <ProtectedRoute><PortfolioScoringNode /></ProtectedRoute>
           } />
           
           <Route path="*" element={<Navigate to="/" replace />} />

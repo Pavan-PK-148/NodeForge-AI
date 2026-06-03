@@ -9,6 +9,7 @@ import {
 } from '../controllers/portfolioController.js'; 
 import { syncGitHubData } from '../controllers/githubController.js';
 import { generateTailoredResume, parseResume } from '../controllers/resumeController.js';
+import { calculatePortfolioMetrics } from '../controllers/portfolioScoringController.js';
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -25,7 +26,8 @@ router.route('/:id')
 
 router.route('/upload-resume').post(protect, upload.single('resume'), parseResume);
 
-// Inside portfolioRoutes.js
 router.route('/tailor-resume').post(protect, generateTailoredResume);
+
+router.post('/scoring-metrics', protect, calculatePortfolioMetrics);
 
 export default router;

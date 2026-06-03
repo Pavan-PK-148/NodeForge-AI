@@ -328,6 +328,61 @@ export default function Dashboard() {
   <span>Enhance Resume</span>
 </motion.button>
 
+<motion.button
+  onClick={() => {
+    navigate('/portfolio-scoring');
+    window.scrollTo(0, 0);
+  }}
+  initial="initial"
+  whileHover="hover"
+  whileTap="tap"
+  variants={{
+    initial: { y: 0, boxShadow: "0 4px 20px rgba(0,0,0,0.5)" },
+    hover: { 
+      y: -2, 
+      borderColor: "rgba(236, 72, 153, 0.4)",
+      boxShadow: "0 0 20px rgba(236, 72, 153, 0.15)" 
+    }
+  }}
+  className="relative inline-flex items-center gap-4 px-5 py-3 rounded-xl border border-purple-950/40 bg-gradient-to-b from-neutral-900/80 to-[#03010a]/90 backdrop-blur-md font-mono text-xs text-pink-400 cursor-pointer overflow-hidden group select-none flex-shrink-0 transition-colors duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]"
+>
+  {/* Cybernetic Grid Ambient Underlay (Swapped to Violet) */}
+  <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(168,85,247,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(168,85,247,0.03)_1px,transparent_1px)] bg-[size:8px_8px] pointer-events-none" />
+
+  {/* Active Scanning Glow Edge (Swapped to Neon Pink) */}
+  <span className="absolute inset-y-0 left-0 w-[2px] bg-pink-500 opacity-40 group-hover:opacity-100 group-hover:h-full transition-all duration-300" />
+
+  {/* Micro Telemetry Graph Visualizer (Swapped to Pink/Purple Gradient) */}
+  <div className="flex items-end gap-[2px] h-3 w-4 flex-shrink-0">
+    {[0.3, 0.8, 0.5, 0.9].map((delay, i) => (
+      <motion.span
+        key={i}
+        animate={{ height: ['20%', '100%', '20%'] }}
+        transition={{
+          duration: 1.2,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: delay
+        }}
+        className="w-[2px] bg-gradient-to-t from-purple-500 to-pink-500 rounded-full origin-bottom"
+      />
+    ))}
+  </div>
+
+  {/* Text Layout Block */}
+  <div className="flex flex-col text-left gap-0.5 relative z-10">
+    <span className="text-[9px] font-bold tracking-widest text-pink-500/50 uppercase">Engine Node</span>
+    <span className="font-sans font-extrabold text-xs tracking-wide text-neutral-200 group-hover:text-pink-400 transition-colors duration-200">
+      Portfolio Scoring
+    </span>
+  </div>
+
+  {/* Live Status Node (Swapped to Pink Theme matching "Telemetry Locked" status) */}
+  <div className="flex items-center gap-1.5 bg-pink-950/20 border border-pink-500/20 px-2 py-0.5 rounded-md text-[9px] font-bold text-pink-400 uppercase tracking-wider relative overflow-hidden flex-shrink-0">
+    <span className="w-1 h-1 rounded-full bg-pink-400 animate-pulse" />
+    Ready
+  </div>
+</motion.button>
   
 </div>
           </div>
